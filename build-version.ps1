@@ -1,2 +1,2 @@
 $version=(nbgv get-version -v NuGetPackageVersion)
-dotnet publish /t:PublishContainer .\MqttTester\ --os linux --arch x64 /p:ContainerImageTags=$version /p:ContainerRegistry="ghcr.io" /p:ContainerImageName="ghcr.io/ridomin/mqtttester"
+dotnet publish /t:PublishContainer .\MqttTester\ --os linux --arch x64 /p:ContainerImageTags=$version /p:ContainerRegistry="ghcr.io" /p:ContainerImageName="ridomin/mqtttester"
