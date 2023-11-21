@@ -10,7 +10,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.IoTMQ.IoTHubConnector.Client" Version="0.8.2-alpha" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-    <PackageReference Include="Microsoft.NET.Build.Containers" Version="8.0.100" />
   </ItemGroup>
 
 </Project>
