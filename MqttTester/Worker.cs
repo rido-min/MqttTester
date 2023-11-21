@@ -20,12 +20,18 @@ namespace MqttTester
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            _logger.LogInformation("\nReading Mqtt Connection Settings from '--ConnectionStrings:Default'");
+            _logger.LogInformation("\nPackageVersions: \n\nIoTMqClinet: {n}\nMqttNet: {m}\n", 
+                IotHubClient.GetSdkVersion(), 
+                typeof(MqttClient).Assembly.GetName().Version!.ToString());
+
             var cs = MqttConnectionSettings.FromConnectionString(_config.GetConnectionString("Default")!);
-            _logger.LogWarning("Connecting with: {cs}", cs);
-            _logger.LogWarning("Nuget: {n}", IotHubClient.GetSdkVersion());
+
+            _logger.LogInformation("Connecting with: {cs}", cs);
+
             IMqttClient mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
             await mqttClient.ConnectAsync(new MqttClientOptionsBuilder().WithMqttConnectionSettings(cs).Build(), stoppingToken);
-            _logger.LogWarning("Client Connected: {c}", mqttClient.IsConnected);
+            
             while (!stoppingToken.IsCancellationRequested)
             {
                 if (_logger.IsEnabled(LogLevel.Information))
