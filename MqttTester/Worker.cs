@@ -21,9 +21,11 @@ namespace MqttTester
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("\nReading Mqtt Connection Settings from '--ConnectionStrings:Default'");
-            _logger.LogInformation("\nPackageVersions: \n\nIoTMqClinet: {n}\nMqttNet: {m}\n", 
-                IotHubClient.GetSdkVersion(), 
+            _logger.LogInformation("\nPackageVersions \n\nMqttTester: {t}\nIotMQClient: {n}\nMqttNet: {m}\n",
+                ThisAssembly.AssemblyFileVersion,
+                IotHubClient.GetSdkVersion(),
                 typeof(MqttClient).Assembly.GetName().Version!.ToString());
+
 
             var cs = MqttConnectionSettings.FromConnectionString(_config.GetConnectionString("Default")!);
 
