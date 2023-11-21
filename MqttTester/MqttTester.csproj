@@ -8,10 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.IoTMQ.IoTHubConnector.Client" Version="0.8.2-alpha" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
-    <PackageReference Include="Microsoft.NET.Build.Containers" Version="0.4.0" />
-    <PackageReference Include="MQTTnet.Extensions.MultiCloud.AzureIoTClient" Version="0.8.1" />
-    <PackageReference Include="MQTTnet.Extensions.MultiCloud.BrokerIoTClient" Version="0.8.1" />
+    <PackageReference Include="Microsoft.NET.Build.Containers" Version="7.0.404" />
   </ItemGroup>
 
 </Project>
