@@ -1,47 +1,32 @@
-using Microsoft.Azure.IoTMQ.IoTHubConnector.Client.Connection.Settings;
-using Microsoft.Azure.IoTMQ.IoTHubConnector.Client.Connection;
-using Microsoft.Azure.IoTMQ.IoTHubConnector.Client;
-using Microsoft.Extensions.Logging;
+using Akri.Mqtt.Connection;
+using Akri.Mqtt.Session;
 using MQTTnet.Client;
-using MQTTnet;
 
-namespace MqttTester
+namespace MqttTester;
+
+public class Worker(MqttSessionClient mqttClient, ILogger<Worker> logger, IConfiguration configuration) : BackgroundService
 {
-    public class Worker : BackgroundService
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        private readonly ILogger<Worker> _logger;
-        private readonly IConfiguration _config;
+        logger.LogInformation("\nReading Mqtt Connection Settings from '--ConnectionStrings:Default'");
+        logger.LogInformation("\nPackageVersions \n\nMqttTester: {t}\nAkri.Mqtt: {n}\nMqttNet: {m}\n",
+            ThisAssembly.AssemblyFileVersion,
+            typeof(MqttSessionClient).Assembly.GetName().Version!.ToString(),
+            typeof(MqttClient).Assembly.GetName().Version!.ToString());
 
-        public Worker(ILogger<Worker> logger, IConfiguration configuration)
+        var cs = MqttConnectionSettings.FromConnectionString(configuration.GetConnectionString("Default")!);
+
+        logger.LogInformation("Connecting with: {cs}", cs);
+        var connAck  = await mqttClient.ConnectAsync(cs, stoppingToken);
+        logger.LogInformation("ConnAck resultCode: {connAck}", connAck.ResultCode);
+        
+        while (!stoppingToken.IsCancellationRequested)
         {
-            _logger = logger;
-            _config = configuration;
-        }
-
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            _logger.LogInformation("\nReading Mqtt Connection Settings from '--ConnectionStrings:Default'");
-            _logger.LogInformation("\nPackageVersions \n\nMqttTester: {t}\nIotMQClient: {n}\nMqttNet: {m}\n",
-                ThisAssembly.AssemblyFileVersion,
-                IotHubClient.GetSdkVersion(),
-                typeof(MqttClient).Assembly.GetName().Version!.ToString());
-
-
-            var cs = MqttConnectionSettings.FromConnectionString(_config.GetConnectionString("Default")!);
-
-            _logger.LogInformation("Connecting with: {cs}", cs);
-
-            IMqttClient mqttClient = new MqttFactory().CreateMqttClient(MqttNetTraceLogger.CreateTraceLogger());
-            await mqttClient.ConnectAsync(new MqttClientOptionsBuilder().WithMqttConnectionSettings(cs).Build(), stoppingToken);
-            
-            while (!stoppingToken.IsCancellationRequested)
+            if (logger.IsEnabled(LogLevel.Information))
             {
-                if (_logger.IsEnabled(LogLevel.Information))
-                {
-                    Console.Write(".");
-                }
-                await Task.Delay(1000, stoppingToken);
+                Console.Write(".");
             }
+            await Task.Delay(1000, stoppingToken);
         }
     }
 }

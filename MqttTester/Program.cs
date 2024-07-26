@@ -5,9 +5,10 @@ internal class Program
 {
     public static void Main(string[] args)
     {
-        Trace.Listeners.Add(new ConsoleTraceListener());
         var builder = Host.CreateApplicationBuilder(args);
-        builder.Services.AddHostedService<Worker>();
+        builder.Services
+            .AddSingleton(MqttSessionClientFactoryProvider.MqttSessionClientFactory)
+            .AddHostedService<Worker>();
 
         var host = builder.Build();
         host.Run();
